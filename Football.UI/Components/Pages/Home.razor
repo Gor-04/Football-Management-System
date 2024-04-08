@@ -1,0 +1,30 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+@inject NavigationManager NavManager
+@inject DialogService DialogService
+
+<RadzenComponents />
+<PageTitle>Home</PageTitle>
+<div class="home_page">
+    <h1>Welcome to our Football players' stock!</h1>
+    <br />
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+        <RadzenButton Click=@(args => PlayerAccount()) Text="Add Player account" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large" />
+        <RadzenButton Click=@(args => BuyPlayer()) Text="Buy player" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large" />
+    </RadzenStack>
+</div>
+    
+@code {
+    
+
+    protected void PlayerAccount()
+    {
+        NavManager.NavigateTo("/player");
+    }
+    protected void BuyPlayer()
+    {
+        NavManager.NavigateTo("/list");
+    }
+
+}

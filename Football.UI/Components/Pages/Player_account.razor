@@ -1,0 +1,79 @@
+﻿@page "/player"
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
+@using Football.Data.DAO
+@using Football.Data.Entities
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Patient Account</PageTitle>
+
+<h1>Patient Account</h1>
+
+ <form>
+    <label for="name">Name</label>
+    <br />
+    <input type="text" name="name" required placeholder="enter player's name" id="name" @bind-value="newPlayer.Name" />
+    <br />
+    <label for="dob">Date of Birth</label>
+    <br />
+    <input type="date" name="dob" required placeholder="enter player's DOB" id="dob" @bind-value="newPlayer.DOB" />
+    <br />
+    <label for="nationality">Nationality</label>
+    <br />
+    <input type="text" name="nationality" required placeholder="enter player's nationality" id="nationality" @bind-value="newPlayer.Nationality" />
+    <br />
+    <label for="position">Position</label>
+    <br />
+    <input type="text" name="position" required placeholder="enter player's'position " id="position" @bind-value="newPlayer.Position" />
+    <label for="team">Team</label>
+    <br />
+    <input type="text" name="team" required placeholder="enter player's'team " id="team" @bind-value="newPlayer.Team" />
+    <br />
+    <label for="price">Price in dollar</label>
+    <br />
+    <input type="number" name="price" required placeholder="enter player's'price " id="price" @bind-value="newPlayer.Price" />
+    <br />
+   
+</form> 
+
+<br />
+
+
+ <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+    <RadzenButton Click=@(args => AddDatabase()) Text="Add" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large" />
+    <RadzenButton Click=@(args => GoToList()) Text="Go to Player list" ButtonStyle="ButtonStyle.Success" Size="ButtonSize.Large" />
+
+   
+</RadzenStack> 
+
+ @code {
+
+
+    [Inject]
+    public ApplicationDBContext context { get; set; }
+
+    public List<PlayerList> AllPlayers { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        AllPlayers = context.PlayerLists.ToList();
+
+        base.OnInitialized();
+    }
+
+    PlayerList newPlayer { get; set; } = new();
+
+    private async void AddDatabase()
+    {
+        await context.PlayerLists.AddAsync(newPlayer);
+        await context.SaveChangesAsync();
+        newPlayer = new();
+        StateHasChanged();
+        await JsRuntime.InvokeVoidAsync("alert", "Successfully added to Player List Database!");
+    }
+    private void GoToList()
+    {
+        NavManager.NavigateTo("/list");
+    }
+
+} 

@@ -1,0 +1,107 @@
+﻿@page "/list"
+@rendermode InteractiveServer
+@using Football.Data.Entities
+@using Football.Data.DAO
+@using Microsoft.EntityFrameworkCore
+@inject DialogService DialogService
+@inject NavigationManager NavManager
+
+<h1>Player List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>Nationality</th>
+            <th>Position</th>
+            <th>Team</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in AllPlayers)
+        {
+            <tr>
+                <td>@player.ID</td>
+                <td>@player.Name</td>
+                <td>@player.DOB</td>
+                <td>@player.Nationality</td>
+                <td>@player.Position</td>
+                <td>@player.Team</td>
+                <td>@player.Price</td>
+                <td>
+                    <button class="btn btn-success" @onclick="()=>BuyPlayer(player)">Buy</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (selectedPlayer != null)
+{
+    <div>
+        <h2>Add Negotiation for @selectedPlayer.Name</h2>
+        <div>
+            <RadzenLabel>New Team</RadzenLabel>
+            <input type="text" @bind="newTeam" />
+        </div>
+        <button class="btn btn-success" @onclick="SaveNegotiation">Save</button>
+        <button class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    </div>
+}
+
+@code {
+    [Inject]
+    public ApplicationDBContext context { get; set; }
+
+    List<PlayerList> AllPlayers { get; set; } = new List<PlayerList>();
+
+    PlayerList selectedPlayer { get; set; }
+    string newTeam { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadPlayerList();
+    }
+
+    private void LoadPlayerList()
+    {
+        AllPlayers = context.PlayerLists.ToList();
+    }
+
+    private void BuyPlayer(PlayerList player)
+    {
+        selectedPlayer = player;
+    }
+
+    private void SaveNegotiation()
+    {
+
+        var negotiation = new NegotrationList
+                {
+                    PlayerID = selectedPlayer.ID,
+                    PlayerName = selectedPlayer.Name,
+                    PreviousTeam = selectedPlayer.Team,
+                    NewTeam = newTeam
+                };
+
+        context.NegotrationLists.Add(negotiation);
+        context.SaveChanges();
+        selectedPlayer = null;
+        newTeam = null;
+        NavManager.NavigateTo("/negotiationList");
+
+            
+        }
+ 
+
+    private void CancelEdit()
+    {
+        selectedPlayer = null;
+        newTeam = null;
+    }
+
+  
+}

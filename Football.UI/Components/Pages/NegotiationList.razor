@@ -1,0 +1,55 @@
+﻿@page "/negotiationList"
+@rendermode InteractiveServer
+@using Football.Data.Entities
+@using Football.Data.DAO
+@inject DialogService DialogService
+@inject NavigationManager NavManager
+
+<h1>Negotiation List</h1>
+
+<h1>Negotiation Page</h1>
+<div class="players">
+@foreach (var negotiation in NegotiationLists)
+{
+    <div class="bigDiv">
+        
+        <div>Name: @negotiation.PlayerName</div>
+        <div>Current Team: @negotiation.PreviousTeam</div>
+        <div>Future Team: @negotiation.NewTeam</div>
+        <button class="btn btn-success" @onclick="()=>Confirm(negotiation)">Confirm</button>
+        <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </div>
+}
+</div>
+@code {
+    [Inject]
+    public ApplicationDBContext context { get; set; }
+
+    List<NegotrationList> NegotiationLists { get; set; } = new List<NegotrationList>();
+
+    protected override void OnInitialized()
+    {
+        LoadNegotiationList();
+    }
+
+    private void LoadNegotiationList()
+    {
+        NegotiationLists = context.NegotrationLists.ToList();
+    }
+
+    private async Task Confirm(NegotrationList negotiation)
+    {
+        var playerToDelete = await context.PlayerLists.FindAsync(negotiation.PlayerID);
+        if (playerToDelete != null)
+        {
+            context.PlayerLists.Remove(playerToDelete);
+            await context.SaveChangesAsync();
+        }
+        NavManager.NavigateTo("/list");
+    }
+
+    private void Cancel()
+    {
+        NavManager.NavigateTo("/");
+    }
+}
