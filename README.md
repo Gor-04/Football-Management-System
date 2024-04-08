@@ -72,6 +72,6 @@ The SQL database schema includes tables for storing player and negotiation data.
 
 ## Contact
 
-For any questions or inquiries, please contact [Your Name](mailto:your-email@example.com).
+For any questions or inquiries, please contact [Gor-04](https://github.com/Gor-04).
 
 Feel free to customize and expand the README file according to your project's specific requirements and needs.
